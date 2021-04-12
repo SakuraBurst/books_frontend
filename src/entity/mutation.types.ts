@@ -1,0 +1,8 @@
+export enum MutationTypes {
+  SET_LOADING = "SET_LOADING",
+  LOGIN = "LOGIN",
+  LOGIN_SUCCESS = "LOGIN_SUCCESS",
+  SET_TOKEN = "SET_TOKEN",
+  GET_BOOKS = "GET_BOOKS",
+  SET_BOOKS = "SET_BOOKS",
+}
