@@ -7,13 +7,13 @@ export interface BookReducer {
   currentBook: book | null;
 }
 
-export let initialProfileStore: BookReducer = {
+export let initialBooksStore: BookReducer = {
   books: [],
   currentBook: null,
 };
 
-export default function userReducer(
-  state = initialProfileStore,
+export default function booksReducer(
+  state = initialBooksStore,
   action: CoolType
 ): BookReducer {
   switch (action.type) {
