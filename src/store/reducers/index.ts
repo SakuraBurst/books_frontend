@@ -1,20 +1,23 @@
 import { combineReducers, Reducer } from "redux";
-import userReducer, { initialProfileStore } from "./profile";
-import { UserResponseType } from "../../entity/user.types";
+import userReducer, { AuthReducer, initialProfileStore } from "./profile";
 import booksReducer, { BookReducer, initialBooksStore } from "./books";
+import commonReducer, { CommonReducer, initialCommonStore } from "./common";
 
 export interface AppStore {
-  auth: UserResponseType;
+  common: CommonReducer;
+  auth: AuthReducer;
   books: BookReducer;
 }
 
 export const initialState: AppStore = {
+  common: initialCommonStore,
   auth: initialProfileStore,
   books: initialBooksStore,
 };
 
 export default function createReducers(): Reducer<AppStore> {
   return combineReducers<AppStore>({
+    common: commonReducer,
     auth: userReducer,
     books: booksReducer,
   });

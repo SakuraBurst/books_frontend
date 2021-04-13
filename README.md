@@ -1,6 +1,5 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+#Я не особо заморачивался с фронтом
+зато все делал сам (ну кроме общего типа для всех экшенов, это подсмотрел в [здесь](https://habr.com/ru/company/alfa/blog/452620/))
 
 ## Available Scripts
 

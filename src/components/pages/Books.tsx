@@ -1,11 +1,14 @@
 import { useAppDispatch, useAppSelector } from "../../helpers/hooks";
-import { ReactElement, useEffect, useRef, useState } from "react";
+import { FC, ReactElement, useEffect, useRef, useState } from "react";
 import { fetchBooks } from "../../store/actions/books";
 import { Button, ButtonGroup, ButtonToolbar, Card } from "react-bootstrap";
 import { book } from "../../entity/books.types";
 import Moment from "react-moment";
+import { RouteComponentProps, StaticContext } from "react-router";
 
-export function ListOfBooks() {
+export const ListOfBooks: FC<
+  RouteComponentProps<any, StaticContext, unknown>
+> = () => {
   // может когда-нибудь мне будет не лень сделать пагинацию с выбором числа итемов
   // а может даже серверную
   const itemsPerList = 5;
@@ -59,7 +62,7 @@ export function ListOfBooks() {
   return (
     <div>
       {currentBooksList.map((a) => (
-        <Card key={a.id} className="book-card">
+        <Card key={a.id} className="book-card my-2">
           <Card.Body>
             <Card.Title>{a.title}</Card.Title>
             <Card.Subtitle className="mb-2 text-muted">
@@ -76,4 +79,4 @@ export function ListOfBooks() {
       </ButtonToolbar>
     </div>
   );
-}
+};

@@ -1,26 +1,30 @@
 import { Alert, Button, Form } from "react-bootstrap";
-import { SyntheticEvent, useState } from "react";
+import { FC, SyntheticEvent, useEffect, useState } from "react";
 import { useAppDispatch } from "../../helpers/hooks";
-import { loginAction } from "../../store/actions/auth";
 import { fetchBooks } from "../../store/actions/books";
+import { RouteComponentProps, StaticContext } from "react-router";
+import { useAuth } from "../../context/AuthProvider";
 
-export default function Authorization() {
+export const Authorization: FC<
+  RouteComponentProps<any, StaticContext, unknown>
+> = (props: RouteComponentProps) => {
   const [validated, setValidated] = useState(false);
   const dispatch = useAppDispatch();
+  const auth = useAuth();
   function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     if (!form.checkValidity()) {
       event.stopPropagation();
     } else {
-      console.log("dfdf");
-      dispatch(loginAction("dfdf@df.ru"));
+      if (auth) {
+        auth.login("dfdf@df.ru", "", props.history);
+      }
       setValidated(true);
     }
   }
   function registration() {
-    console.log("lol prikol");
-    dispatch(fetchBooks());
+    props.history.push("/registration");
   }
   return (
     <div className="auth-form justify-content-center d-flex">
@@ -44,4 +48,4 @@ export default function Authorization() {
       </Alert>
     </div>
   );
-}
+};

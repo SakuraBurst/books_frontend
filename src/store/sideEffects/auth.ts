@@ -1,18 +1,76 @@
 import { UserResponseType } from "../../entity/user.types";
-import { call, takeEvery } from "redux-saga/effects";
+import { call, takeEvery, put } from "redux-saga/effects";
 import { AxiosInstanse } from "../../helpers/axios";
+import { setAlert, setAppLoading } from "../actions/common";
+import {
+  loginAction,
+  loginActionSuccess,
+  registrationAction,
+} from "../actions/auth";
 import { MutationTypes } from "../../entity/mutation.types";
+import { AxiosResponse } from "axios";
+import { RegistrationForm } from "../../entity/form.types";
+const login = (data: { email: string }) => () =>
+  AxiosInstanse.post("/api/login", data);
 
-const login = () => AxiosInstanse.post("/api/login", { email: "dfdf@df.ru" });
+const registration = (data: RegistrationForm) => () =>
+  AxiosInstanse.post("/api/registration", data);
 
-export function* AuthSaga() {
+export function* AuthSaga({
+  email,
+  password,
+  history,
+}: ReturnType<typeof loginAction>) {
+  yield put(setAppLoading(true));
+  console.log("dfdf");
   try {
-    const user: UserResponseType = yield call(login);
-    console.log(user);
+    const response: AxiosResponse<UserResponseType> = yield call(
+      login({ email })
+    );
+    console.log(response);
+    yield put(loginActionSuccess(response.data));
+    history.push("/books");
+    yield put(setAppLoading(false));
   } catch (e) {
     console.log(e);
+    yield put(setAppLoading(false));
+    yield put(
+      setAlert({
+        type: "error",
+        text: "штото пошло не так, проверьте правильность вводимых данных",
+      })
+    );
+  }
+}
+
+export function* RegistrationSaga({
+  newUser,
+}: ReturnType<typeof registrationAction>) {
+  yield put(setAppLoading(true));
+  console.log("dfdfddddddd");
+  try {
+    const response: AxiosResponse<any> = yield call(registration(newUser));
+    console.log(response);
+    // history.push("/books");
+    yield put(
+      setAlert({
+        type: "success",
+        text: "ты зарегался, заебись, теперь ты можешь с этими данными зайти",
+      })
+    );
+    yield put(setAppLoading(false));
+  } catch (e) {
+    console.log(e);
+    yield put(setAppLoading(false));
+    yield put(
+      setAlert({
+        type: "error",
+        text: "штото пошло не так, проверьте правильность вводимых данных",
+      })
+    );
   }
 }
 export function* AuthWatcher() {
+  yield takeEvery(MutationTypes.REGISTRATION, RegistrationSaga);
   yield takeEvery(MutationTypes.LOGIN, AuthSaga);
 }

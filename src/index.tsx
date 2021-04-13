@@ -8,8 +8,9 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import configureStore from "./store/configureStore";
 import { initialState } from "./store/reducers";
+import { AuthProvider } from "./context/AuthProvider";
 
-const store = configureStore(initialState);
+export const store = configureStore(initialState);
 export type RootState = ReturnType<typeof store.getState>;
 
 export type AppDispatch = typeof store.dispatch;
@@ -17,9 +18,11 @@ export type AppDispatch = typeof store.dispatch;
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </AuthProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")
