@@ -1,49 +1,69 @@
-import { Alert, Button, Form } from "react-bootstrap";
-import { FC, SyntheticEvent, useEffect, useState } from "react";
+import { Alert } from "react-bootstrap";
+import { FC } from "react";
 import { useAppDispatch } from "../../helpers/hooks";
-import { fetchBooks } from "../../store/actions/books";
 import { RouteComponentProps, StaticContext } from "react-router";
 import { useAuth } from "../../context/AuthProvider";
+import { AuthorizationForm } from "../../entity/form.types";
+import * as Yup from "yup";
+import { setAlert } from "../../store/actions/common";
+import { Field, FormBuilder } from "../FormBuilder";
 
 export const Authorization: FC<
   RouteComponentProps<any, StaticContext, unknown>
 > = (props: RouteComponentProps) => {
-  const [validated, setValidated] = useState(false);
   const dispatch = useAppDispatch();
   const auth = useAuth();
-  function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    if (!form.checkValidity()) {
-      event.stopPropagation();
+
+  const initialValues: AuthorizationForm = {
+    email: "",
+    password: "",
+  };
+  const schema = Yup.object({
+    email: Yup.string().email("Invalid email address").required("Required"),
+    password: Yup.string().required("Required"),
+  });
+
+  const submit = (values: AuthorizationForm) => {
+    if (auth) {
+      auth.login(values, props.history);
     } else {
-      if (auth) {
-        auth.login("dfdf@df.ru", "", props.history);
-      }
-      setValidated(true);
+      dispatch(setAlert({ type: "error", text: "возникли какие-то проблемы" }));
     }
-  }
+  };
+  const fields: Array<Field<AuthorizationForm>> = [
+    {
+      type: "text",
+      valueName: "email",
+      title: "E-mail",
+      placeholder: "",
+      controlId: "3",
+    },
+    {
+      type: "password",
+      valueName: "password",
+      title: "Пароль",
+      placeholder: "",
+      controlId: "4",
+    },
+  ];
   function registration() {
     props.history.push("/registration");
   }
   return (
     <div className="auth-form justify-content-center d-flex">
-      <Form noValidate validated={validated} onSubmit={handleSubmit}>
-        <Form.Row>
-          <Form.Group controlId="validationCustom01">
-            <Form.Label>E-mail</Form.Label>
-            <Form.Control required type="text" placeholder="lol@lol.lol" />
-          </Form.Group>
-        </Form.Row>
-        <Form.Row>
-          <Form.Group controlId="validationCustom02">
-            <Form.Label>Пароль</Form.Label>
-            <Form.Control required type="password" />
-          </Form.Group>
-        </Form.Row>
-        <Button type="submit">Login</Button>
-      </Form>
-      <Alert onClick={registration} variant="primary">
+      <FormBuilder
+        formikInitialValue={initialValues}
+        fields={fields}
+        buttonName={"Войти"}
+        onSubmit={submit}
+        history={props.history}
+        schema={schema}
+      />
+      <Alert
+        onClick={registration}
+        className="cursor-pointer"
+        variant="primary"
+      >
         Нет аккаунта? Зарегестрироваться
       </Alert>
     </div>

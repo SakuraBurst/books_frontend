@@ -1,12 +1,15 @@
-import { FormikProps } from "formik";
+import { useFormik } from "formik";
 import { Button, Form } from "react-bootstrap";
 import { FC } from "react";
-import { FormKeys, FormUnion } from "../entity/form.types";
-// мои потуги в билдер форм ни к чему не привели, я пару часов своей жизни отдал на это
-// но  дальше мне лень этим знаиматься, учитываю что проект в основном не фронтовой
-// да, звучит как оправдание, это оно и есть.Может быть потом вернусь, у меня есть пара идей
+import {
+  AuthorizationForm,
+  NewBookForm,
+  RegistrationForm,
+} from "../entity/form.types";
+import { History } from "history";
+
 export interface Field<T> {
-  type: "text" | "password";
+  type: "text" | "password" | "date";
   valueName: keyof T;
   title: string;
   placeholder: string;
@@ -14,20 +17,34 @@ export interface Field<T> {
 }
 
 export interface FormBuilderI<T> {
-  formik: FormikProps<T>;
+  formikInitialValue: T;
   fields: Array<Field<T>>;
   buttonName: string;
+  onSubmit(value: T, history?: History<unknown>): void;
+  history?: History<unknown>;
+  schema: any;
 }
 
-export const FormBuilder: FC<FormBuilderI<FormUnion>> = ({
-  formik,
+// ТИП ТОЛЬКО ДЛЯ ФОРМ БИЛДЕРА
+// это плохо я знаю, но я пока хз как сделать так, чтобы все типы удовлетворяли одному инетрфейсу
+// поэтому просто сделал его локальным
+type _FormUnion = RegistrationForm & AuthorizationForm & NewBookForm;
+
+export const FormBuilder: FC<FormBuilderI<_FormUnion>> = ({
+  formikInitialValue,
   fields,
   buttonName,
+  onSubmit,
+  history,
+  schema,
 }) => {
-  function returnValue(formik: FormikProps<FormUnion>, key: FormKeys) {
-    // @ts-ignore шобы не мешал
-    return formik.values[key];
-  }
+  const formik = useFormik<_FormUnion>({
+    initialValues: formikInitialValue,
+    validationSchema: schema,
+    onSubmit: (values) => {
+      onSubmit(values, history);
+    },
+  });
   return (
     <div className="auth-form justify-content-center d-flex">
       <Form
@@ -36,14 +53,24 @@ export const FormBuilder: FC<FormBuilderI<FormUnion>> = ({
         onSubmit={formik.handleSubmit}
       >
         {fields.map((a) => (
-          <Form.Row>
-            <Form.Group controlId={a.controlId}>
+          <Form.Row key={a.controlId}>
+            <Form.Group>
               <Form.Label>{a.title}</Form.Label>
               <Form.Control
                 required
+                id={a.valueName}
+                name={a.valueName}
                 type={a.type}
+                onBlur={formik.handleBlur}
                 placeholder={a.placeholder}
-                value={returnValue(formik, a.valueName)}
+                value={formik.values[a.valueName]}
+                onChange={formik.handleChange}
+                isValid={
+                  formik.touched[a.valueName] && !formik.errors[a.valueName]
+                }
+                isInvalid={
+                  formik.touched[a.valueName] && !!formik.errors[a.valueName]
+                }
               />
             </Form.Group>
           </Form.Row>

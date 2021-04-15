@@ -12,10 +12,14 @@
 }
 
 .book-card{
-    cursor: pointer;
     min-width: 375px !important;
 }
 
 .app_container {
     position: static;
+}
+
+
+.cursor-pointer {
+    cursor: pointer;
 }

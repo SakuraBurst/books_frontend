@@ -1,10 +1,10 @@
-import { book, BooksResponseType } from "../../entity/books.types";
+import { Book, BooksResponseType } from "../../entity/books.types";
 import { MutationTypes } from "../../entity/mutation.types";
 import { CoolType } from "../actions";
 
 export interface BookReducer {
   books: BooksResponseType;
-  currentBook: book | null;
+  currentBook: Book | null;
 }
 
 export let initialBooksStore: BookReducer = {
@@ -21,6 +21,11 @@ export default function booksReducer(
       return {
         ...state,
         books: action.data,
+      };
+    case MutationTypes.SET_BOOK:
+      return {
+        ...state,
+        currentBook: action.data,
       };
     default:
       return state;

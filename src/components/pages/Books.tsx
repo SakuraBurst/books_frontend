@@ -2,17 +2,19 @@ import { useAppDispatch, useAppSelector } from "../../helpers/hooks";
 import { FC, ReactElement, useEffect, useRef, useState } from "react";
 import { fetchBooks } from "../../store/actions/books";
 import { Button, ButtonGroup, ButtonToolbar, Card } from "react-bootstrap";
-import { book } from "../../entity/books.types";
+import { Book } from "../../entity/books.types";
 import Moment from "react-moment";
 import { RouteComponentProps, StaticContext } from "react-router";
+import { AddBookModal } from "../AddBookModal";
 
 export const ListOfBooks: FC<
   RouteComponentProps<any, StaticContext, unknown>
-> = () => {
+> = (props: RouteComponentProps) => {
   // может когда-нибудь мне будет не лень сделать пагинацию с выбором числа итемов
   // а может даже серверную
   const itemsPerList = 5;
-  const [currentBooksList, setCurrentBooksList] = useState<Array<book>>([]);
+  const [currentBooksList, setCurrentBooksList] = useState<Array<Book>>([]);
+  const [modalShow, setModalShow] = useState(false);
   const books = useAppSelector((a) => a.books.books);
   const dispatch = useAppDispatch();
   // шобы линтер не ругался
@@ -32,10 +34,12 @@ export const ListOfBooks: FC<
     return books.length;
   }
   // шобы линтер не ругался
-  const nextPage = useRef((where: number) => () => {});
+  const nextPage = useRef((where: number) => () => {
+    console.log(where);
+  });
   nextPage.current = (where: number) => {
     return () => {
-      const currentBooks: Array<book> = [];
+      const currentBooks: Array<Book> = [];
       for (let i = where - itemsPerList; i < where; i++) {
         if (books[i]) {
           currentBooks.push(books[i]);
@@ -62,7 +66,11 @@ export const ListOfBooks: FC<
   return (
     <div>
       {currentBooksList.map((a) => (
-        <Card key={a.id} className="book-card my-2">
+        <Card
+          onClick={() => props.history.push(`/books/${a.id}`)}
+          key={a.id}
+          className="book-card cursor-pointer my-2"
+        >
           <Card.Body>
             <Card.Title>{a.title}</Card.Title>
             <Card.Subtitle className="mb-2 text-muted">
@@ -77,6 +85,18 @@ export const ListOfBooks: FC<
       <ButtonToolbar>
         <ButtonGroup>{buttons()}</ButtonGroup>
       </ButtonToolbar>
+      <Button
+        onClick={() => setModalShow(true)}
+        className="mt-5"
+        variant="success"
+      >
+        Добавить книгу
+      </Button>
+      <AddBookModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        history={props.history}
+      />
     </div>
   );
 };

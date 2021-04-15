@@ -5,6 +5,7 @@ import { Authorization } from "../components/pages/Authoriztion";
 import { ListOfBooks } from "../components/pages/Books";
 import ProtectedRoute from "./ProtectedRoute";
 import { Registration } from "../components/pages/Registration";
+import { Book } from "../components/pages/Book";
 
 export default function Router() {
   const route: Array<RouteI> = [
@@ -16,6 +17,11 @@ export default function Router() {
     {
       routeName: "/about",
       routeComponent: withRouter(Lol),
+      private: true,
+    },
+    {
+      routeName: "/books/:id",
+      routeComponent: withRouter(Book),
       private: true,
     },
     {

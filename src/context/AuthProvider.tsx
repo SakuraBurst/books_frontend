@@ -7,11 +7,11 @@ import {
   logoutAction,
   registrationAction,
 } from "../store/actions/auth";
-import { RegistrationForm } from "../entity/form.types";
+import { AuthorizationForm, RegistrationForm } from "../entity/form.types";
 type auth =
   | {
       user: User | undefined;
-      login(email: string, password: string, history: History<unknown>): void;
+      login(login: AuthorizationForm, history: History<unknown>): void;
       logOut(): void;
       registration(newUser: RegistrationForm): void;
     }
@@ -30,9 +30,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const user = useAppSelector((a) => a.auth.user);
   const auth = {
     user,
-    login(email: string, password: string, history: History<unknown>) {
+    login(login: AuthorizationForm, history: History<unknown>) {
       console.log("d2");
-      dispatch.current(loginAction(email, password, history));
+      dispatch.current(loginAction(login, history));
     },
     logOut() {
       dispatch.current(logoutAction());
@@ -41,11 +41,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       dispatch.current(registrationAction(newUser));
     },
   };
-  // useEffect(() => {
-  //   if (localStorage.getItem("token")) {
-  //     dispatch.current(getUserByToken(localStorage.getItem("token")!));
-  //   } else {
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      console.log(localStorage);
+    } else {
+    }
+  }, []);
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 }

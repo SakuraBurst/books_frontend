@@ -9,23 +9,22 @@ import {
 } from "../actions/auth";
 import { MutationTypes } from "../../entity/mutation.types";
 import { AxiosResponse } from "axios";
-import { RegistrationForm } from "../../entity/form.types";
-const login = (data: { email: string }) => () =>
+import { AuthorizationForm, RegistrationForm } from "../../entity/form.types";
+const login = (data: AuthorizationForm) => () =>
   AxiosInstanse.post("/api/login", data);
 
 const registration = (data: RegistrationForm) => () =>
   AxiosInstanse.post("/api/registration", data);
 
 export function* AuthSaga({
-  email,
-  password,
+  loginObj,
   history,
 }: ReturnType<typeof loginAction>) {
   yield put(setAppLoading(true));
   console.log("dfdf");
   try {
     const response: AxiosResponse<UserResponseType> = yield call(
-      login({ email })
+      login(loginObj)
     );
     console.log(response);
     yield put(loginActionSuccess(response.data));

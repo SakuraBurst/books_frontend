@@ -1,16 +1,14 @@
 import { MutationTypes } from "../../entity/mutation.types";
 import { UserResponseType } from "../../entity/user.types";
 import { History } from "history";
-import { RegistrationForm } from "../../entity/form.types";
+import { AuthorizationForm, RegistrationForm } from "../../entity/form.types";
 export const loginAction = (
-  email: string,
-  password: string,
+  loginObj: AuthorizationForm,
   history: History<unknown>
 ) => {
   return <const>{
     type: MutationTypes.LOGIN,
-    email,
-    password,
+    loginObj,
     history,
   };
 };
