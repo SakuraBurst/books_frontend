@@ -14,7 +14,6 @@ export const Registration: FC<
   const dispatch = useAppDispatch();
 
   const submit = (values: RegistrationForm) => {
-    console.log(values);
     if (auth) {
       auth.registration(values);
     } else {

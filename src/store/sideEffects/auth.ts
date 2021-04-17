@@ -1,7 +1,7 @@
 import { UserResponseType } from "../../entity/user.types";
 import { call, takeEvery, put } from "redux-saga/effects";
 import { AxiosInstanse } from "../../helpers/axios";
-import { setAlert, setAppLoading } from "../actions/common";
+import { firstAppLoading, setAlert, setAppLoading } from "../actions/common";
 import {
   loginAction,
   loginActionSuccess,
@@ -10,46 +10,41 @@ import {
 import { MutationTypes } from "../../entity/mutation.types";
 import { AxiosResponse } from "axios";
 import { AuthorizationForm, RegistrationForm } from "../../entity/form.types";
+import { ErrorSaga } from "./errors";
 const login = (data: AuthorizationForm) => () =>
   AxiosInstanse.post("/api/login", data);
 
 const registration = (data: RegistrationForm) => () =>
   AxiosInstanse.post("/api/registration", data);
 
-export function* AuthSaga({
-  loginObj,
-  history,
-}: ReturnType<typeof loginAction>) {
+const getUser = () => AxiosInstanse.get("/api/v2/user");
+
+export const LOCAL_STORAGE_KEY = "auth_key";
+
+function* AuthSaga({ loginObj, history }: ReturnType<typeof loginAction>) {
   yield put(setAppLoading(true));
-  console.log("dfdf");
   try {
     const response: AxiosResponse<UserResponseType> = yield call(
       login(loginObj)
     );
-    console.log(response);
+    localStorage.setItem(LOCAL_STORAGE_KEY, response.data.token);
+    AxiosInstanse.defaults.headers["Authorization"] = response.data.token;
     yield put(loginActionSuccess(response.data));
     history.push("/books");
     yield put(setAppLoading(false));
   } catch (e) {
     console.log(e);
-    yield put(setAppLoading(false));
-    yield put(
-      setAlert({
-        type: "error",
-        text: "штото пошло не так, проверьте правильность вводимых данных",
-      })
+    yield ErrorSaga(
+      e,
+      "штото пошло не так, проверьте правильность вводимых данных"
     );
   }
 }
 
-export function* RegistrationSaga({
-  newUser,
-}: ReturnType<typeof registrationAction>) {
+function* RegistrationSaga({ newUser }: ReturnType<typeof registrationAction>) {
   yield put(setAppLoading(true));
-  console.log("dfdfddddddd");
   try {
-    const response: AxiosResponse<any> = yield call(registration(newUser));
-    console.log(response);
+    yield call(registration(newUser));
     // history.push("/books");
     yield put(
       setAlert({
@@ -60,16 +55,27 @@ export function* RegistrationSaga({
     yield put(setAppLoading(false));
   } catch (e) {
     console.log(e);
-    yield put(setAppLoading(false));
-    yield put(
-      setAlert({
-        type: "error",
-        text: "штото пошло не так, проверьте правильность вводимых данных",
-      })
+    yield ErrorSaga(
+      e,
+      "штото пошло не так, проверьте правильность вводимых данных"
     );
   }
 }
+
+function* GetUserByTokenSaga() {
+  try {
+    const response: AxiosResponse<UserResponseType> = yield call(getUser);
+    yield put(loginActionSuccess(response.data));
+    yield put(firstAppLoading(false));
+  } catch (e) {
+    console.log(e.response);
+    yield ErrorSaga(e, "Токен устарел");
+    yield put(firstAppLoading(false));
+  }
+}
+
 export function* AuthWatcher() {
+  yield takeEvery(MutationTypes.GET_USER_BY_TOKEN, GetUserByTokenSaga);
   yield takeEvery(MutationTypes.REGISTRATION, RegistrationSaga);
   yield takeEvery(MutationTypes.LOGIN, AuthSaga);
 }

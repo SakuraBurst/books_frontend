@@ -5,11 +5,13 @@ import { Alert } from "../../entity/common.types";
 export interface CommonReducer {
   alerts: Array<Alert>;
   appLoading: boolean;
+  firstAppLoading: boolean;
 }
 
 export const initialCommonStore: CommonReducer = {
   alerts: [],
   appLoading: false,
+  firstAppLoading: true,
 };
 
 function removeAlert(state: CommonReducer, id: number): Array<Alert> {
@@ -28,6 +30,11 @@ export default function commonReducer(
   action: CoolType
 ): CommonReducer {
   switch (action.type) {
+    case MutationTypes.FIRST_APP_LOADING:
+      return {
+        ...state,
+        firstAppLoading: action.flag,
+      };
     case MutationTypes.SET_LOADING:
       return {
         ...state,

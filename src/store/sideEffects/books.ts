@@ -14,31 +14,31 @@ import {
 import { AxiosResponse } from "axios";
 import { setAlert, setAppLoading } from "../actions/common";
 import { NewBookForm } from "../../entity/form.types";
+import { ErrorSaga } from "./errors";
 
-const getBooksApi = () => AxiosInstanse.get("/api/books");
+const getBooksApi = () => AxiosInstanse.get("/api/v2/books");
 
-const getBookApi = (id: string) => () => AxiosInstanse.get(`/api/books/${id}`);
+const getBookApi = (id: string) => () =>
+  AxiosInstanse.get(`/api/v2/books/${id}`);
 
 const setBookApi = (book: NewBookForm) => () =>
-  AxiosInstanse.post("/api/books", book);
+  AxiosInstanse.post("/api/v2/books", book);
 
 const editBookApi = (book: NewBookForm, id: string) => () =>
-  AxiosInstanse.delete(`/api/books/${id}`);
+  AxiosInstanse.put(`/api/v2/books/${id}`, book);
 
 const deleteBookApi = (id: string) => () =>
-  AxiosInstanse.delete(`/api/books/${id}`);
+  AxiosInstanse.delete(`/api/v2/books/${id}`);
 
 function* GetBooksSaga() {
   yield put(setAppLoading(true));
   try {
     const books: AxiosResponse<BooksResponseType> = yield call(getBooksApi);
-    console.log(books);
     yield put(setBooksIntoState(books.data));
     yield put(setAppLoading(false));
   } catch (e) {
     console.log(e);
-    yield put(setAppLoading(false));
-    yield put(setAlert({ type: "error", text: "штото пошло не так" }));
+    yield ErrorSaga(e, "штото пошло не так");
   }
 }
 
@@ -57,13 +57,7 @@ function* AddBookSaga({ book }: ReturnType<typeof AddBook>) {
       })
     );
   } catch (e) {
-    yield put(setAppLoading(false));
-    yield put(
-      setAlert({
-        type: "error",
-        text: "штото пошло не так, проверьте правильность данных",
-      })
-    );
+    yield ErrorSaga(e, "штото пошло не так, проверьте правильность данных");
   }
 }
 
@@ -71,13 +65,10 @@ function* GetBookSaga({ id }: ReturnType<typeof fetchBook>) {
   yield put(setAppLoading(true));
   try {
     const book: AxiosResponse<Book> = yield call(getBookApi(id));
-    console.log(book);
     yield put(setBookIntoState(book.data));
     yield put(setAppLoading(false));
   } catch (e) {
-    console.log(e);
-    yield put(setAppLoading(false));
-    yield put(setAlert({ type: "error", text: "нет такой книги" }));
+    yield ErrorSaga(e, "нет такой книги");
   }
 }
 
@@ -93,14 +84,8 @@ function* EditBookSaga({ bookForm, id }: ReturnType<typeof EditBook>) {
         text: "все круто",
       })
     );
-  } catch (e) {
-    yield put(setAppLoading(false));
-    yield put(
-      setAlert({
-        type: "error",
-        text: "штото пошло не так, проверьте правильность данных",
-      })
-    );
+  } catch (e: any) {
+    yield ErrorSaga(e, "штото пошло не так, проверьте правильность данных");
   }
 }
 
@@ -113,9 +98,7 @@ function* DeleteBookSaga({ id, history }: ReturnType<typeof deleteBookAction>) {
     yield put(fetchBooks());
     history.push("/books");
   } catch (e) {
-    console.log(e);
-    yield put(setAppLoading(false));
-    yield put(setAlert({ type: "error", text: "нет такой книги" }));
+    yield ErrorSaga(e, "нет такой книги");
   }
 }
 

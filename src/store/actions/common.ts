@@ -2,6 +2,12 @@ import { MutationTypes } from "../../entity/mutation.types";
 import { Alert, AlertMessage } from "../../entity/common.types";
 import { store } from "../../index";
 
+export const firstAppLoading = (flag: boolean) =>
+  <const>{
+    type: MutationTypes.FIRST_APP_LOADING,
+    flag,
+  };
+
 export const setAppLoading = (flag: boolean) =>
   <const>{
     type: MutationTypes.SET_LOADING,

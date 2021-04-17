@@ -3,13 +3,19 @@ import { History } from "history";
 import { User } from "../entity/user.types";
 import { useAppDispatch, useAppSelector } from "../helpers/hooks";
 import {
+  getUserByToken,
   loginAction,
   logoutAction,
   registrationAction,
 } from "../store/actions/auth";
 import { AuthorizationForm, RegistrationForm } from "../entity/form.types";
+import { LOCAL_STORAGE_KEY } from "../store/sideEffects/auth";
+import { AxiosInstanse } from "../helpers/axios";
+import GreatLoader from "../components/GreatLoader";
+import { firstAppLoading } from "../store/actions/common";
 type auth =
   | {
+      currentToken: string;
       user: User | undefined;
       login(login: AuthorizationForm, history: History<unknown>): void;
       logOut(): void;
@@ -27,11 +33,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ну да шобы линтер не ругался
   const dispatch = useRef(useAppDispatch());
   dispatch.current = useAppDispatch();
-  const user = useAppSelector((a) => a.auth.user);
+  const { user, token } = useAppSelector((a) => a.auth);
+  const isAppLoading = useAppSelector((a) => a.common.firstAppLoading);
   const auth = {
+    currentToken: token,
     user,
     login(login: AuthorizationForm, history: History<unknown>) {
-      console.log("d2");
       dispatch.current(loginAction(login, history));
     },
     logOut() {
@@ -42,10 +49,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   };
   useEffect(() => {
-    if (localStorage.getItem("token")) {
-      console.log(localStorage);
+    const token = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (token) {
+      AxiosInstanse.defaults.headers["Authorization"] = token;
+      dispatch.current(getUserByToken());
     } else {
+      dispatch.current(firstAppLoading(false));
     }
   }, []);
-  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
+  return auth && !isAppLoading ? (
+    <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>
+  ) : (
+    <GreatLoader />
+  );
 }

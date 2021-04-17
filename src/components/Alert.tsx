@@ -28,9 +28,6 @@ export default function Alert() {
             backgroundColor: a.type === "success" ? "green" : "red",
             color: "white",
             minWidth: 200,
-            position: "absolute",
-            top: 0,
-            right: 0,
           }}
           onClose={removeAlertById(a.id)}
         >

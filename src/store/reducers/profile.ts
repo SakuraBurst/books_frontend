@@ -8,7 +8,7 @@ export interface AuthReducer {
 }
 
 export let initialProfileStore: AuthReducer = {
-  token: "1111111111",
+  token: "",
   user: undefined,
 };
 
@@ -18,12 +18,16 @@ export default function userReducer(
 ): AuthReducer {
   switch (action.type) {
     case MutationTypes.LOGIN_SUCCESS:
-      console.log(action.data);
       return {
         ...state,
         user: action.data.user,
+        token: action.data.token,
       };
-
+    case MutationTypes.SET_TOKEN:
+      return {
+        ...state,
+        token: action.token,
+      };
     case MutationTypes.LOGOUT:
       return {
         ...state,

@@ -19,10 +19,9 @@ export const registrationAction = (newUser: RegistrationForm) => {
   };
 };
 
-export const getUserByToken = (token: string) => {
+export const getUserByToken = () => {
   return <const>{
-    type: MutationTypes.REGISTRATION,
-    token,
+    type: MutationTypes.GET_USER_BY_TOKEN,
   };
 };
 export const loginActionSuccess = (data: UserResponseType) =>
@@ -38,6 +37,4 @@ export const setToken = (data: string) =>
 export const logoutAction = () =>
   <const>{
     type: MutationTypes.LOGOUT,
-    token: "",
-    user: undefined,
   };
