@@ -72,7 +72,6 @@ export const AddBookModal: FC<AddBookModalI> = ({ show, onHide, history }) => {
         buttonName={"новая книга"}
         onSubmit={submit}
         schema={schema}
-        history={history}
       />
     </JustModal>
   );

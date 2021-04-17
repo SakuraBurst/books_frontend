@@ -21,7 +21,6 @@ export interface FormBuilderI<T> {
   fields: Array<Field<T>>;
   buttonName: string;
   onSubmit(value: T, history?: History<unknown>): void;
-  history?: History<unknown>;
   schema: any;
 }
 
@@ -35,14 +34,13 @@ export const FormBuilder: FC<FormBuilderI<_FormUnion>> = ({
   fields,
   buttonName,
   onSubmit,
-  history,
   schema,
 }) => {
   const formik = useFormik<_FormUnion>({
     initialValues: formikInitialValue,
     validationSchema: schema,
     onSubmit: (values) => {
-      onSubmit(values, history);
+      onSubmit(values);
     },
   });
   return (

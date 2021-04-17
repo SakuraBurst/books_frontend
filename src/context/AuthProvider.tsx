@@ -1,4 +1,11 @@
-import { createContext, ReactNode, useContext, useEffect, useRef } from "react";
+import {
+  createContext,
+  FC,
+  ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+} from "react";
 import { History } from "history";
 import { User } from "../entity/user.types";
 import { useAppDispatch, useAppSelector } from "../helpers/hooks";
@@ -19,7 +26,7 @@ type auth =
       user: User | undefined;
       login(login: AuthorizationForm, history: History<unknown>): void;
       logOut(): void;
-      registration(newUser: RegistrationForm): void;
+      registration(newUser: RegistrationForm, history: History<unknown>): void;
     }
   | undefined;
 
@@ -29,7 +36,11 @@ export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export const AuthProvider: FC<{ children: ReactNode }> = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   // ну да шобы линтер не ругался
   const dispatch = useRef(useAppDispatch());
   dispatch.current = useAppDispatch();
@@ -44,8 +55,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logOut() {
       dispatch.current(logoutAction());
     },
-    registration(newUser: RegistrationForm) {
-      dispatch.current(registrationAction(newUser));
+    registration(newUser: RegistrationForm, history: History<unknown>) {
+      dispatch.current(registrationAction(newUser, history));
     },
   };
   useEffect(() => {
@@ -62,4 +73,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   ) : (
     <GreatLoader />
   );
-}
+};

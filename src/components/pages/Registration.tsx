@@ -15,7 +15,7 @@ export const Registration: FC<
 
   const submit = (values: RegistrationForm) => {
     if (auth) {
-      auth.registration(values);
+      auth.registration(values, props.history);
     } else {
       dispatch(setAlert({ type: "error", text: "возникли какие-то проблемы" }));
     }
@@ -73,7 +73,6 @@ export const Registration: FC<
         fields={fields}
         buttonName={"зарегаться"}
         onSubmit={submit}
-        history={props.history}
         schema={schema}
       />
     </div>

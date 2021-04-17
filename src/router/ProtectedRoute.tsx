@@ -13,6 +13,6 @@ export default function ProtectedRoute({
   return auth && auth.currentToken ? (
     <Route path={path}>{children}</Route>
   ) : (
-    <Redirect to={"/"} />
+    <Redirect to={"/authorization"} />
   );
 }

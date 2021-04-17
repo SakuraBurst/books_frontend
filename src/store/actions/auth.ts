@@ -12,10 +12,14 @@ export const loginAction = (
     history,
   };
 };
-export const registrationAction = (newUser: RegistrationForm) => {
+export const registrationAction = (
+  newUser: RegistrationForm,
+  history: History<unknown>
+) => {
   return <const>{
     type: MutationTypes.REGISTRATION,
     newUser,
+    history,
   };
 };
 

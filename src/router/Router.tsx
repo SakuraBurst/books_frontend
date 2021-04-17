@@ -1,4 +1,4 @@
-import { Route, Switch, withRouter } from "react-router-dom";
+import { Redirect, Route, Switch, withRouter } from "react-router-dom";
 import { Lol } from "../components/Lol";
 import { RouteI } from "./router.types";
 import { Authorization } from "../components/pages/Authoriztion";
@@ -12,6 +12,11 @@ export default function Router() {
     {
       routeName: "/registration",
       routeComponent: withRouter(Registration),
+      private: false,
+    },
+    {
+      routeName: "/authorization",
+      routeComponent: withRouter(Authorization),
       private: false,
     },
     {
@@ -31,8 +36,8 @@ export default function Router() {
     },
     {
       routeName: "/",
-      routeComponent: withRouter(Authorization),
-      private: false,
+      routeComponent: <Redirect to="/books" />,
+      private: true,
     },
   ];
   return (

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import {
   RouteComponentProps,
   StaticContext,
@@ -7,8 +7,8 @@ import {
 
 export type RouteI = {
   routeName: string;
-  routeComponent: WithRouterStatics<
-    FC<RouteComponentProps<any, StaticContext, unknown>>
-  >;
+  routeComponent:
+    | WithRouterStatics<FC<RouteComponentProps<any, StaticContext, unknown>>>
+    | ReactNode;
   private: boolean;
 };

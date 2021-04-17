@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { RouteComponentProps, StaticContext } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../helpers/hooks";
 import { fetchBook } from "../../store/actions/books";
@@ -13,7 +13,7 @@ interface ViewBookParams {
 
 export const Book: FC<
   RouteComponentProps<ViewBookParams, StaticContext, unknown>
-> = memo((props: RouteComponentProps<ViewBookParams>) => {
+> = (props: RouteComponentProps<ViewBookParams>) => {
   const randomPictures: Array<string> = [
     "https://tlgrm.eu/_/stickers/b12/d5f/b12d5fb5-fbd0-3a2d-99fc-2642b586f219/2.jpg",
     "https://static.wikia.nocookie.net/36689b26-ddcb-4ae6-a8c0-33b165fb6bcd",
@@ -81,4 +81,4 @@ export const Book: FC<
   ) : (
     <div>ъаъа</div>
   );
-});
+};

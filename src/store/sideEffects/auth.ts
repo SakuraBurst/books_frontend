@@ -41,11 +41,14 @@ function* AuthSaga({ loginObj, history }: ReturnType<typeof loginAction>) {
   }
 }
 
-function* RegistrationSaga({ newUser }: ReturnType<typeof registrationAction>) {
+function* RegistrationSaga({
+  newUser,
+  history,
+}: ReturnType<typeof registrationAction>) {
   yield put(setAppLoading(true));
   try {
     yield call(registration(newUser));
-    // history.push("/books");
+    history.push("/authorization");
     yield put(
       setAlert({
         type: "success",

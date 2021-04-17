@@ -56,7 +56,6 @@ export const Authorization: FC<
         fields={fields}
         buttonName={"Войти"}
         onSubmit={submit}
-        history={props.history}
         schema={schema}
       />
       <Alert
