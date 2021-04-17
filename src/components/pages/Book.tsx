@@ -35,9 +35,9 @@ export const Book: FC<
   const [pictureIndex, changePictureIndex] = useState(0);
   const book = useAppSelector((a) => a.books.currentBook);
   const id = props.match.params.id;
-  const changeIndex = useRef(() => {});
-  changeIndex.current = () =>
-    changePictureIndex(Math.round(Math.random() * randomPictures.length - 1));
+  const changeIndex = useRef(() =>
+    changePictureIndex(Math.round(Math.random() * randomPictures.length - 1))
+  );
 
   const dispatch = useAppDispatch();
   useEffect(() => {

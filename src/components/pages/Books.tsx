@@ -34,7 +34,10 @@ export const ListOfBooks: FC<
     return books.length;
   }
   // шобы линтер не ругался
-  const nextPage = useRef((where: number) => {
+  const nextPage = useRef((where: number) => () => {
+    console.log(where);
+  });
+  nextPage.current = (where: number) => {
     return () => {
       const currentBooks: Array<Book> = [];
       for (let i = where - itemsPerList; i < where; i++) {
@@ -44,7 +47,7 @@ export const ListOfBooks: FC<
       }
       setCurrentBooksList(currentBooks);
     };
-  });
+  };
   function buttons(): Array<ReactElement> {
     const buttons: Array<ReactElement> = [];
     const pagination = Math.ceil(getBooksLength() / itemsPerList);
