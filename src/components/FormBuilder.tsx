@@ -1,16 +1,12 @@
 import { useFormik } from "formik";
 import { Button, Form } from "react-bootstrap";
-import { FC } from "react";
-import {
-  AuthorizationForm,
-  NewBookForm,
-  RegistrationForm,
-} from "../entity/form.types";
+import { ReactElement } from "react";
+import { UnionForm } from "../entity/form.types";
 import { History } from "history";
 
 export interface Field<T> {
   type: "text" | "password" | "date";
-  valueName: keyof T;
+  valueName: Extract<keyof T, string>;
   title: string;
   placeholder: string;
   controlId: string;
@@ -24,19 +20,14 @@ export interface FormBuilderI<T> {
   schema: any;
 }
 
-// ТИП ТОЛЬКО ДЛЯ ФОРМ БИЛДЕРА
-// это плохо я знаю, но я пока хз как сделать так, чтобы все типы удовлетворяли одному инетрфейсу
-// поэтому просто сделал его локальным
-type _FormUnion = RegistrationForm & AuthorizationForm & NewBookForm;
-
-export const FormBuilder: FC<FormBuilderI<_FormUnion>> = ({
+export function FormBuilder<T extends UnionForm>({
   formikInitialValue,
   fields,
   buttonName,
   onSubmit,
   schema,
-}) => {
-  const formik = useFormik<_FormUnion>({
+}: FormBuilderI<T>): ReactElement<T> {
+  const formik = useFormik<T>({
     initialValues: formikInitialValue,
     validationSchema: schema,
     onSubmit: (values) => {
@@ -77,4 +68,4 @@ export const FormBuilder: FC<FormBuilderI<_FormUnion>> = ({
       </Form>
     </div>
   );
-};
+}
